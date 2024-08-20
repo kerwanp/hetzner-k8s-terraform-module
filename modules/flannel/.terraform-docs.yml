@@ -1,0 +1,8 @@
+content: |-
+  {{ .Header }}
+
+  {{ .Providers }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
