@@ -1,6 +1,8 @@
 # Hetzner Kubernetes Terraform Module
 
-This Terraform module allows you to bootstrap self-managed clusters on Hetzner Cloud in no time.
+This Terraform module allows you to bootstrap self-managed clusters on Hetzner Cloud in no time. Perfect for labs.
+
+> ⚠ This is not battle tested, use it are your own risks.
 
 ## Features
 
