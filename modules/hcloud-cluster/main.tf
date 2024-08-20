@@ -28,11 +28,17 @@ data "hcloud_location" "this" {
 locals {
   subnet = cidrsubnet(var.cidr, 8, 1)
   token  = "${random_password.bootstrap_token_id.result}.${random_password.bootstrap_token_secret.result}"
-  common_k3s_args = [
+  k3s_master_args = [
+    "server",
+    "--cluster-init",
     "--kube-apiserver-arg", "enable-bootstrap-token-auth",
     "--kubelet-arg", "cloud-provider=external",
     "--disable", "traefik",
     "--disable-cloud-controller",
+  ]
+  k3s_agent_args = [
+    "agent",
+    "--kubelet-arg", "cloud-provider=external",
   ]
 }
 
@@ -64,7 +70,7 @@ module "master" {
   network_range = hcloud_network.this.ip_range
 
   cluster_token          = random_password.cluster_token.result
-  k3s_args               = concat(["server", "--cluster-init"], local.common_k3s_args)
+  k3s_args               = local.k3s_master_args
   bootstrap_token_id     = random_password.bootstrap_token_id.result
   bootstrap_token_secret = random_password.bootstrap_token_secret.result
 
@@ -89,7 +95,7 @@ module "agents" {
   k3s_join_existing = true
   k3s_url           = module.master.k3s_url
   cluster_token     = random_password.cluster_token.result
-  k3s_args          = concat(["agent"], local.common_k3s_args)
+  k3s_args          = local.k3s_agent_args
 
   location    = data.hcloud_location.this.name
   server_type = each.value.server_type
